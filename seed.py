@@ -8,6 +8,8 @@ from model import Movie
 from model import connect_to_db, db
 from server import app
 
+from datetime import datetime
+
 
 def load_users():
     """Load users from u.user into database."""
@@ -43,9 +45,23 @@ def load_movies():
 
     for row in open("seed_data/u.item"):
         row = row.rstrip()
-        movie_id, title, release_at, video_release_date, imdb_url = row.split("|")
+        row = row.split("|")
+        movie_id = row[0]
+        title = row[1]
+        release_date = row[2]
+        imdb_url = row[4]
 
-        movie = Movie(movie_id=movie_id,title=title,release_at=release_at, imdb_url=imdb_url)
+        title = title[:-7]
+        # title = title.strip("0123456789()")
+        # title = title.rstrip()
+
+        if release_date:
+            release_date = datetime.strptime(release_date, "%d-%b-%Y")
+        else:
+            release_date = "01-01-1900"
+
+
+        movie = Movie(movie_id=movie_id,title=title,release_date=release_date, imdb_url=imdb_url)
 
         db.session.add(movie)
 
@@ -61,9 +77,19 @@ def load_ratings():
 
     for row in open("seed_data/u.data"):
         row = row.rstrip()
-        user_id, movie_id, score, timestamp = row.split(" ")
+        row = row.split()
+        user_id = row[0]
+        movie_id = row[1]
+        score = row[2]
 
-        rating = Rating
+     
+
+
+        rating = Rating(user_id=user_id, movie_id=movie_id, score=score)
+
+        db.session.add(rating)
+
+    db.session.commit()
 
 def set_val_user_id():
     """Set value for the next user_id after seeding database"""
@@ -76,6 +102,15 @@ def set_val_user_id():
     query = "SELECT setval('users_user_id_seq', :new_id)"
     db.session.execute(query, {'new_id': max_id + 1})
     db.session.commit()
+
+# def datetime_as_string(release_date):
+#     """Formats release date. Strings should be in this format, "%d-%b-%Y". """
+
+#     release_date = release_date.strptime(release_date, "%d-%b-%Y")
+#     # release_date = release_date.strftime("%d-%b-%Y")
+
+#     return release_date
+
 
 
 if __name__ == "__main__":
