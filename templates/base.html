@@ -1,0 +1,27 @@
+<!doctype html>
+<html> 
+<head>
+<!--  CSS AND JAVASCRIPT HERE  -->
+    <title>Ratings</title>
+</head>
+
+<body>
+    <div class=nav>
+        
+            <a href="/login">log in</a>
+     
+
+    </div>
+
+    {% for message in get_flashed_messages() %}
+        <div class=flash>{{ message }}</div>
+    {% endfor %}
+
+    Ratings
+    <hr>
+
+    {% block content %} put your content here {% endblock %}
+
+
+</body>
+</html>

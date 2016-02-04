@@ -42,7 +42,13 @@ class Movie(db.Model):
     # video_release_date = db.Column(db.DateTime, nullable=True)
     imdb_url = db.Column(db.String(200), nullable=True)
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Movie movie_id=%s title=%s release_date=%s imdb_url=%s>" % (
+            self.movie_id, self.title, self.release_date, self.imdb_url)
     # ratings = db.relationship('Rating')
+
 
 
 class Rating(db.Model):
@@ -54,8 +60,14 @@ class Rating(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     score = db.Column(db.Integer, nullable=True)
 
-    movie = db.relationship('Movie')
-    user = db.relationship('User')
+    movie = db.relationship('Movie', backref=db.backref("ratings", order_by=rating_id))
+    user = db.relationship('User', backref=db.backref("ratings", order_by=rating_id))
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Rating rating_id=%s movie_id=%s user_id=%s score=%s>" % (
+            self.rating_id, self.movie_id, self.user_id, self.score)
 
 
 ##############################################################################
